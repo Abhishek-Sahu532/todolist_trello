@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import TaskColumn from "./TaskCol";
 import { Input, Button, Typography } from "@material-tailwind/react";
+import { Link } from "react-router-dom";
 
 const initialTasks = {
   todo: [
@@ -82,9 +83,11 @@ const Root = () => {
 
   return (
     <div className="flex flex-col items-center mt-4 p-6">
-      <button className="mb-4 p-2 bg-blue-500 text-white rounded">
+     <Link to='/add-a-task'>
+     <button className="mb-4 p-2 bg-blue-500 text-white rounded">
         Add Task
       </button>
+     </Link> 
 
       <div className="flex w-full flex-row justify-between bg-blue-gray-700  ">
         <div className="flex  gap-x-2 sm:flex-row sm:items-center pl-6">

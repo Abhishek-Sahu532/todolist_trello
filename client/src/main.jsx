@@ -7,6 +7,7 @@ import SignIn from "./Components/Signin.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./Components/Signup.jsx";
 import Root from "./Components/Root.jsx";
+import AddTask from "./Components/AddTask.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "sign-up",
         element: <SignUp />,
+      },
+      {
+        path: "add-a-task",
+        element: <AddTask />,
       },
       {
         path: "account",

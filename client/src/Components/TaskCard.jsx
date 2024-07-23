@@ -1,6 +1,9 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import EditTask from "./EditTask";
+import ViewTask from './ViewTask'
+
+
 
 const TaskCard = ({ task, index }) => {
   return (
@@ -20,10 +23,8 @@ const TaskCard = ({ task, index }) => {
               Delete
             </button>
            
-            <EditTask  />
-            <button className="p-1 bg-blue-500 text-white rounded">
-              View Details
-            </button>
+            <EditTask title={task.title} description={task.description}/>
+           <ViewTask title={task.title} description={task.description} createdAt={task.createdAt} />
           </div>
         </div>
       )}
