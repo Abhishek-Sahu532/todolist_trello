@@ -16,8 +16,8 @@ export const userSlice = createSlice({
     },
     registerUserSuccess: (state, action) => {
       state.loading = false;
-      state.currentUser = action.payload;
-      state.success = true;
+      state.currentUser = {}
+      // state.success = true;
     },
     registerUserFailure: (state, action) => {
       state.error = action.payload;

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import "./App.css";
 import { NavbarDefault } from "./Components/Navbar";
 import { ToastContainer } from "react-toastify";
@@ -16,14 +16,15 @@ import axios from "axios";
 
 function App() {
   const dispatch = useDispatch();
-  const {currentuser} = useSelector((state) => state.user);
+  const { currentuser, success } = useSelector((state) => state.user);
 
+  const navigate = useNavigate();
   //getting the current user , to keep it log in in app
   const getCurrentUser = async () => {
     try {
       dispatch(currentUserRequest());
       const res = await axios.get("/api/v1/users/user");
-      console.log(res);
+      // console.log(res);
       dispatch(currentUserSucess(res.data));
     } catch (error) {
       let htmlError = extractErrorMessage(error.response?.data);
@@ -34,6 +35,11 @@ function App() {
   useEffect(() => {
     getCurrentUser();
   }, [currentuser]);
+  useEffect(() => {
+    if (!success) {
+      navigate("/sign-in");
+    }
+  }, [success, navigate]);
 
   return (
     <div>

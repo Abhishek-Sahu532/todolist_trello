@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./Components/Signup.jsx";
 import Root from "./Components/Root.jsx";
 import AddTask from "./Components/AddTask.jsx";
+import PrivateRoute from "./PrivateRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -16,9 +17,26 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
-        element: <Root />,
-      },
+				path: '/',
+				element: <PrivateRoute />,
+				children: [
+					{
+						path: '/',
+						element: <Root />,
+					},
+				],
+			},
+      {
+				path: '/',
+				element: <PrivateRoute />,
+				children: [
+					{
+						path: 'add-a-task',
+						element: <AddTask />,
+					},
+				],
+			},
+
       {
         path: "sign-in",
         element: <SignIn />,
@@ -26,15 +44,7 @@ const router = createBrowserRouter([
       {
         path: "sign-up",
         element: <SignUp />,
-      },
-      {
-        path: "add-a-task",
-        element: <AddTask />,
-      },
-      {
-        path: "account",
-        element: <div>About</div>,
-      },
+      }
     ],
   },
 ]);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,7 +9,7 @@ import {
   signinUserSuccess,
   signinUserFailure,
 } from "../Reducers/userSlice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch , useSelector} from "react-redux";
 import api from "../api";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -18,6 +18,9 @@ import { extractErrorMessage } from "../extractMsg.js";
 export function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const success = useSelector((state) => state.user.success);
+
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
   const {
@@ -39,16 +42,17 @@ export function SignIn() {
       dispatch(signinUserSuccess(res.data));
       navigate("/");
     } catch (error) {
-      console.log("err", error);
-
+      // console.log("err", error);
       let htmlError = extractErrorMessage(error.response?.data);
-
       dispatch(signinUserFailure(htmlError || error.message));
-
       toast.error(htmlError);
     }
   };
-
+useEffect(()=>{
+if(success){
+  navigate('/')
+}
+}, [success, navigate])
   return (
     <section className="grid text-center h-screen items-center p-8">
       <div>

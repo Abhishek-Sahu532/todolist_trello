@@ -8,21 +8,20 @@ import {
   getTasksSuccess,
   getTasksFailure,
 } from "../Reducers/taskSlice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { extractErrorMessage } from "../extractMsg.js";
 
 const Root = () => {
   const dispatch = useDispatch();
-
+const {loading, error}= useSelector((state)=> state.tasks)
   const [tasks, setTasks] = useState({
     todo: [],
     inProgress: [],
     done: [],
   });
 
-  // console.log(tasks)
   const getTasks = async () => {
     try {
       dispatch(getTasksRequest());
@@ -49,7 +48,9 @@ const Root = () => {
 
   useEffect(() => {
     getTasks();
-  }, []);
+  }, [getTasks, dispatch]);
+
+  
 
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
@@ -97,7 +98,7 @@ const Root = () => {
       </Link>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex w-full justify-between ">
+      <div className="flex flex-col md:flex-row w-full justify-between space-y-4 md:space-y-0 md:space-x-4">
           <TaskColumn title="TODO" tasks={tasks.todo} droppableId="todo" />
           <TaskColumn
             title="IN PROGRESS"

@@ -8,13 +8,43 @@ import {
   DialogFooter,
   Textarea,
 } from "@material-tailwind/react";
+import {
+  editATaskRequest,
+  editATaskSuccess,
+  editATaskFailure,
+} from "../Reducers/taskSlice.js";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { extractErrorMessage } from "../extractMsg.js";
 
-function EditTask({ title, description }) {
+function EditTask({ title, description, taskId }) {
+  const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
   const [editTitle, setEditTitle] = useState(title);
   const [editDescription, setEditDescription] = useState(description);
 
+
   const handleOpen = () => setOpen(!open);
+
+const handleEditClick= async()=>{
+try{
+  dispatch(editATaskRequest());
+  const config = { headers: { "Content-Type": "application/json" } };
+  const res = await axios.put(`/api/v1/tasks/edit-task/${taskId}`, {editTitle, editDescription}, config);
+  // console.log(res.data)
+  dispatch(editATaskSuccess(res.data));
+  setOpen(close)
+  toast.success('Task edit successfully')
+}catch(error){
+      // console.log("err", error);
+      let htmlError = extractErrorMessage(error.response?.data);
+      dispatch(editATaskFailure(htmlError || error.message));
+      toast.error(htmlError);
+}
+}
+
 
   return (
     <>
@@ -47,7 +77,7 @@ function EditTask({ title, description }) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handleOpen}>
+          <Button onClick={handleEditClick} variant="gradient" color="green" >
             <span>Edit</span>
           </Button>
         </DialogFooter>

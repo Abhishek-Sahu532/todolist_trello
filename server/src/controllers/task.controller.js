@@ -72,9 +72,10 @@ export const getTasks = asyncHandler(async (req, res) => {
 });
 
 export const editUserTask = asyncHandler(async (req, res) => {
-  const { title, description } = req.body;
+  const { editTitle, editDescription } = req.body;
 
   const { taskId } = req.params;
+
   const user = await User.findById(req.user._id);
   if (!user) {
     throw new ApiError(400, "User not found.");
@@ -83,8 +84,8 @@ export const editUserTask = asyncHandler(async (req, res) => {
     taskId,
     {
       $set: {
-        title,
-        description,
+        title: editTitle,
+        description: editDescription,
       },
     },
     { new: true }

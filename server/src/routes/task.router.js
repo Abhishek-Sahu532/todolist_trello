@@ -24,6 +24,8 @@ router.route('/tasks/:taskId').patch(verifyJWT, updateTaskStatus)
 router
   .route("/edit-task/:taskId")
   .put(verifyJWT, editUserTask)
-  .delete(verifyJWT, deleteUserTask);
+
+  router
+  .route("/delete-task/:taskId").delete(verifyJWT, deleteUserTask);
 
 export default router;

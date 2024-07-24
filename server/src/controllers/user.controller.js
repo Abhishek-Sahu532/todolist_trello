@@ -190,11 +190,11 @@ const signinUser = asyncHandler(async (req, res) => {
   if (!isPasswordIsValid) {
     throw new ApiError(401, "Wrong crediential");
   }
-  console.log(user?._id, user);
+  // console.log(user?._id, user);
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
     user?._id
   );
-  console.log("access", accessToken);
+  // console.log("access", accessToken);
   const loggedUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
