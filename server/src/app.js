@@ -7,8 +7,8 @@ import path from "path";
 // Declare variable
 export const app = express();
 
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+// import { fileURLToPath } from "url";
+// import { dirname } from "path";
 // Config CORS with Express
 app.use(
   cors({
@@ -47,8 +47,8 @@ app.use("/api/v1/tasks", taskRouter);
 // 	res.status(500).json({ error: 'Something went wrong!' });
 // });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "../../client/dist")));
 
