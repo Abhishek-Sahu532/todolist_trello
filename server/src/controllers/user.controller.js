@@ -23,7 +23,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   //get user details
   const { firstName, lastName, email, password } = req.body;
-
+  // console.log(firstName, lastName, email, password)
   //validate user details
   if (
     [firstName, lastName, email, password].some((field) => field?.trim() === "")
@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   //check exist user
-  const existUser = await User.findOne({  email });
+  const existUser = await User.findOne({ email });
 
   if (existUser) {
     throw new ApiError(409, "User is already exist.");
@@ -160,14 +160,13 @@ const googleAuth = asyncHandler(async (req, res) => {
 //Login User
 const signinUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
+  // console.log(email, password )
   const ExistingUser = req.user;
-  console.log(req.body)
+  // console.log(req.body)
 
   if (ExistingUser) {
     throw new ApiError(400, "User already logged in from different user");
   }
-
 
   if (!email) {
     throw new ApiError(
@@ -189,13 +188,13 @@ const signinUser = asyncHandler(async (req, res) => {
   const isPasswordIsValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordIsValid) {
-    throw new ApiError(401, "Wrong password, please fill a valid password.");
+    throw new ApiError(401, "Wrong crediential");
   }
-
+  console.log(user?._id, user);
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    user._id
+    user?._id
   );
-
+  console.log("access", accessToken);
   const loggedUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
@@ -210,7 +209,11 @@ const signinUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, option)
     .cookie("refreshToken", refreshToken, option)
     .json(
-      new ApiResponse(200, { user: loggedUser }, "User logged successfully!!!")
+      new ApiResponse(
+        200,
+        { user: loggedUser, accessToken: accessToken },
+        "User logged successfully!!!"
+      )
     );
 });
 

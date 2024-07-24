@@ -1,20 +1,27 @@
 import React from "react";
 import {
-  Button,
   Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
+  Card,
+  CardBody,
+  CardFooter,
+  Typography,
+  Button,
 } from "@material-tailwind/react";
 
-function ViewTask({ title, description, createdAt }) {
+function ViewTask({ title, description, createdAt, image }) {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(!open);
 
   return (
     <>
-      <Button onClick={handleOpen} variant="gradient">
+      <Button
+        color="blue"
+        size="sm"
+        variant="outlined"
+        className="flex items-center gap-2"
+        onClick={handleOpen}
+      >
         View
       </Button>
       <Dialog
@@ -25,20 +32,34 @@ function ViewTask({ title, description, createdAt }) {
           unmount: { scale: 0.9, y: -100 },
         }}
       >
-        <DialogHeader>{title} </DialogHeader>
-        <DialogBody className="flex flex-col gap-2">{description} <br/>
-        {createdAt}
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={handleOpen}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
-        </DialogFooter>
+        <Card>
+          <CardBody>
+            <div className="flex justify-between">
+              <img
+                className=" object-cover object-center mb-4 h-16 w-16 rounded-full"
+                src={image}
+                alt={title}
+              />
+              <Typography className="text-xs">{createdAt}</Typography>
+            </div>
+            <Typography variant="h5" color="blue-gray" className="mb-2">
+              {title}
+            </Typography>
+            <Typography>{description}</Typography>
+          </CardBody>
+          <CardFooter className="pt-0 flex gap-2  items-center">
+            <Button
+              color="red"
+              size="sm"
+              variant="outlined"
+              className="flex items-center gap-2"
+              onClick={handleOpen}
+              
+            >
+              <span>Cancel</span>
+            </Button>
+          </CardFooter>
+        </Card>
       </Dialog>
     </>
   );

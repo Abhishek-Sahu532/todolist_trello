@@ -39,10 +39,10 @@ app.all('/api/*', (req, res) => {
 		.json({ error: { code: '404', message: 'The page could not be found' } });
 });
 
-app.use((err, req, res, next) => {
-	console.error(err.stack);
-	res.status(500).json({ error: 'Something went wrong!' });
-});
+// app.use((err, req, res, next) => {
+// 	console.error(err.stack);
+// 	res.status(500).json({ error: 'Something went wrong!' });
+// });
 
 app.get('/api/health', (req, res) => {
 	res.status(200).json({ status: 'OK' });

@@ -13,7 +13,7 @@ const taskSchema = new mongoose.Schema(
 		processTitle: {
 			type: String,
 			required: true,
-			default: 'TODO',
+			default: 'todo',
 		},
 		taskImage: {
 			type: String, // cloudnery URL

@@ -51,6 +51,26 @@ export const createATask = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, newTask, "Task created successfully!!!"));
 });
 
+//get tasks
+export const getTasks = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "User not found.");
+  }
+
+  const tasks = await Task.find({
+    createdBy: user._id,
+  });
+
+  // console.log(tasks);
+  if (!tasks) {
+    throw new ApiError(400, "Error while getting tasks.");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, tasks, "Task fetched successfully!!!"));
+});
+
 export const editUserTask = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
 
@@ -92,4 +112,24 @@ export const deleteUserTask = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Task deleted successfully."));
+});
+
+export const updateTaskStatus = asyncHandler(async (req, res) => {
+  const { taskId } = req.params;
+  const { status } = req.body;
+  console.log(status, taskId);
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "User not found.");
+  }
+
+  const tasks = await Task.findByIdAndUpdate(
+    taskId,
+    { processTitle: status },
+    { new: true }
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, tasks, "Task status update successfully."));
 });

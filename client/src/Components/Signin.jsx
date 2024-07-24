@@ -1,30 +1,54 @@
 import { useState } from "react";
-
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import GoogleAuthBtn from "./GoogleAuthBtn";
+import {
+  signinUserRequest,
+  signinUserSuccess,
+  signinUserFailure,
+} from "../Reducers/userSlice.js";
+import { useDispatch } from "react-redux";
+import api from "../api";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { extractErrorMessage } from "../extractMsg.js";
 
 export function SignIn() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const myForm = new FormData();
-    myForm.set("fullname", data.fullname);
     myForm.set("email", data.email);
-    myForm.set("username", data.username);
     myForm.set("password", data.password);
-    myForm.set("avatar", data.avatar[0]);
-    myForm.set("coverImage", data.coverImage[0]);
-    // dispatch(registerUser(myForm));
+    try {
+      dispatch(signinUserRequest());
+
+      const config = { headers: { "Content-Type": "application/json" } };
+      const res = await axios.post("/api/v1/users/signin", myForm, config);
+      // console.log(res.data)
+      dispatch(signinUserSuccess(res.data));
+      navigate("/");
+    } catch (error) {
+      console.log("err", error);
+
+      let htmlError = extractErrorMessage(error.response?.data);
+
+      dispatch(signinUserFailure(htmlError || error.message));
+
+      toast.error(htmlError);
+    }
   };
+
   return (
     <section className="grid text-center h-screen items-center p-8">
       <div>
@@ -60,7 +84,10 @@ export function SignIn() {
               }}
               {...register("email", {
                 required: "Email is required",
-                pattern: "_%+-]+@[a-zA-Z0-9. -]+\\. [a-zA-Z]{2,}$/,",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Invalid email address",
+                },
               })}
             />
             {errors.email && (
@@ -95,33 +122,21 @@ export function SignIn() {
               }
               {...register("password", {
                 required: "Password is required",
-                minLength: "8",
-                maxLength: "30",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 8 characters",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Password cannot exceed 30 characters",
+                },
               })}
             />
             {errors.password && (
               <p className="my-2 text-red-600">{errors.password.message}</p>
             )}
           </div>
-          <Typography
-            variant="small"
-            color="gray"
-            className="mt-2 flex items-center gap-1 font-normal"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="-mt-px h-4 w-4"
-            >
-              <path
-                fillRule="evenodd"
-                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Use at least 8 characters.
-          </Typography>
+
           <Button
             type="submit"
             color="gray"
@@ -129,10 +144,10 @@ export function SignIn() {
             className="mt-6"
             fullWidth
           >
-            sign in
+            Sign In
           </Button>
 
-         <GoogleAuthBtn />
+          <GoogleAuthBtn />
           <Typography
             variant="small"
             color="gray"

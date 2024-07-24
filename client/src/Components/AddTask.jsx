@@ -1,16 +1,22 @@
 import { Typography, Input, Button, Textarea } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 
-import { api } from "../api";
+import api from "../api";
 import {
   addATaskRequest,
   addATaskSuccess,
   addATaskFailure,
-} from "../Reducers/userSlice.js";
+} from "../Reducers/taskSlice";
+
+import axios from "axios";
+import { extractErrorMessage } from "../extractMsg.js";
+import { toast } from "react-toastify";
 
 const AddTask = () => {
+  // const { loading } = useSelector((state) => state.task);
+
   const {
     register,
     handleSubmit,
@@ -18,20 +24,28 @@ const AddTask = () => {
   } = useForm();
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
     const myForm = new FormData();
     myForm.set("title", data.title);
     myForm.set("description", data.description);
     myForm.set("taskimage", data.taskimage[0]);
-    // dispatch(registerUser(myForm));
     dispatch(addATaskRequest());
     try {
-      const response = await api.post("/tasks/add-a-task", myForm);
-
+      const config = { headers: { "Content-Type": "multipart/form-data" } };
+      const response = await axios.post(
+        "/api/v1/tasks/add-a-task",
+        myForm,
+        config
+      );
+      console.log(response.data);
       dispatch(addATaskSuccess(response.data));
+      toast.success(response.data.message);
+      navigate("/");
     } catch (error) {
-      dispatch(addATaskFailure(error.response?.data?.message || error.message));
+      let htmlError = extractErrorMessage(error.response?.data);
+      dispatch(addATaskFailure(htmlError || error.message));
+      toast.error(htmlError);
     }
   };
 
@@ -121,6 +135,7 @@ const AddTask = () => {
             size="lg"
             className="mt-6"
             fullWidth
+            disabled={isSubmitting ? true : false}
           >
             Add
           </Button>

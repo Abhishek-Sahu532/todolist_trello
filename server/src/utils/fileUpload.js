@@ -5,7 +5,6 @@ import fs from 'fs';
 configDotenv({
 	path: '../.env',
 });
-
 cloudinary.config({
 	cloud_name: process.env.CLOUD_NAME,
 	api_key: process.env.CLOUD_API_KEY,
@@ -13,6 +12,8 @@ cloudinary.config({
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
+	
+// console.log(process.env.CLOUD_NAME)
 	try {
 		if (!localFilePath) return null;
 
@@ -20,7 +21,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 		const response = await cloudinary.uploader.upload(localFilePath, {
 			resource_type: 'auto',
 		});
-
+// console.log('response', response)
 		// remove the local temporary file
 		fs.unlinkSync(localFilePath);
 		return response;

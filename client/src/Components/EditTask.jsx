@@ -18,7 +18,7 @@ function EditTask({ title, description }) {
 
   return (
     <>
-      <Button onClick={handleOpen}>Edit</Button>
+      <Button color="green" size="sm" variant="outlined" className="flex items-center gap-2" onClick={handleOpen}>Edit</Button>
       <Dialog open={open} handler={handleOpen}>
         <DialogHeader>Edit Task </DialogHeader>
         <DialogBody className="gap-2">

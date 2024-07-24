@@ -59,10 +59,30 @@ export const taskSlice = createSlice({
       state.success = false;
       state.error = action.payload;
     },
+
+    getTasksRequest: (state) => {
+      state.loading = true;
+      state.success = false;
+      state.error = null;
+    },
+    getTasksSuccess: (state, action) => {
+      state.task = action.payload;
+      state.loading = false;
+      state.success = true;
+      state.error = null;
+    },
+    getTasksFailure: (state, action) => {
+      state.loading = false;
+      state.success = false;
+      state.error = action.payload;
+    },
   },
 });
 
 export const {
+  getTasksRequest,
+  getTasksSuccess,
+  getTasksFailure,
   addATaskRequest,
   addATaskSuccess,
   addATaskFailure,

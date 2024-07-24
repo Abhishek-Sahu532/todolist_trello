@@ -14,7 +14,7 @@ export const userSlice = createSlice({
     registerUserRequest: (state) => {
       state.loading = true;
     },
-    registerUserSucess: (state, action) => {
+    registerUserSuccess: (state, action) => {
       state.loading = false;
       state.currentUser = action.payload;
       state.success = true;
@@ -26,7 +26,7 @@ export const userSlice = createSlice({
     signinUserRequest: (state) => {
       state.loading = true;
     },
-    signinUserSucess: (state, action) => {
+    signinUserSuccess: (state, action) => {
       state.loading = false;
       state.currentUser = action.payload;
       state.success = true;
@@ -45,18 +45,34 @@ export const userSlice = createSlice({
       state.loading = false;
       state.success = false;
     },
+
+
+    currentUserRequest: (state) => {
+      state.loading = true;
+    },
+    currentUserSucess: (state, action) => {
+      state.loading = false;
+      state.currentUser = action.payload;
+      state.success = true;
+    },
+    currentUserFailure: (state, action) => {
+      state.error = action.payload;
+    },
   },
 });
 
 export const {
   registerUserRequest,
-  registerUserSucess,
+  registerUserSuccess,
   registerUserFailure,
   signinUserRequest,
-  signinUserSucess,
+  signinUserSuccess,
   signinUserFailure,
   signoutUserSucess,
   signoutUserFailure,
+  currentUserRequest,
+  currentUserSucess,
+  currentUserFailure
 } = userSlice.actions;
 
 export default userSlice.reducer;

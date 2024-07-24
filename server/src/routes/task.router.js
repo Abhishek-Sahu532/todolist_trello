@@ -4,7 +4,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   createATask,
   editUserTask,
-  deleteUserTask,
+  deleteUserTask,getTasks, updateTaskStatus
 } from "../controllers/task.controller.js";
 
 const router = Router();
@@ -19,7 +19,8 @@ router.route("/add-a-task").post(
   ]),
   createATask
 );
-
+router.route('/tasks').get(verifyJWT, getTasks)
+router.route('/tasks/:taskId').patch(verifyJWT, updateTaskStatus)
 router
   .route("/edit-task/:taskId")
   .put(verifyJWT, editUserTask)

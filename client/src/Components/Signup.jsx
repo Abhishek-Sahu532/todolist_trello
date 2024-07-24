@@ -1,30 +1,57 @@
 import { useState } from "react";
-
 import { useForm } from "react-hook-form";
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  registerUserRequest,
+  registerUserSuccess,
+  registerUserFailure,
+} from "../Reducers/userSlice.js";
+import { useDispatch } from "react-redux";
+import api from "../api";
+import { toast } from "react-toastify";
 
 export function SignUp() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [passwordShown, setPasswordShown] = useState(false);
   const [confirmPasswordShown, setConfirmPasswordShown] = useState(false);
-  const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
-  const toggleConfirmPasswordVisiblity = () =>
+
+  const togglePasswordVisibility = () => setPasswordShown((cur) => !cur);
+  const toggleConfirmPasswordVisibility = () =>
     setConfirmPasswordShown((cur) => !cur);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
+    watch,
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const myForm = new FormData();
     myForm.set("firstName", data.firstName);
     myForm.set("lastName", data.lastName);
     myForm.set("email", data.email);
     myForm.set("password", data.password);
     myForm.set("avatar", data.avatar[0]);
-    // dispatch(registerUser(myForm));
+
+    try {
+      dispatch(registerUserRequest());
+      const config = { headers: { "Content-Type": "multipart/form-data" } };
+      const res = await api.post("/users/signup", myForm, config);
+      // console.log(res.data);
+      dispatch(registerUserSuccess(res.data));
+      toast.success("User Successfully Singed Up");
+      navigate("/sign-in");
+    } catch (error) {
+      let htmlError = extractErrorMessage(error.response?.data);
+      dispatch(
+        registerUserFailure(htmlError || error.message)
+      );
+      toast.error(htmlError);
+    }
   };
 
   return (
@@ -55,18 +82,22 @@ export function SignUp() {
               size="lg"
               type="text"
               name="firstName"
-              placeholder="First Name "
+              placeholder="First Name"
               className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               {...register("firstName", {
                 required: "First Name is required",
-                minLength: "5",
-                maxLength: "20",
+
+                maxLength: {
+                  value: 20,
+                  message: "Maximum length is 20 characters",
+                },
               })}
             />
           </div>
           {errors.firstName && (
             <p className="my-2 text-red-600">{errors.firstName.message}</p>
           )}
+
           <div className="mb-6">
             <label htmlFor="lastName">
               <Typography
@@ -82,18 +113,22 @@ export function SignUp() {
               size="lg"
               type="text"
               name="lastName"
-              placeholder="Lat Name "
+              placeholder="Last Name"
               className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               {...register("lastName", {
                 required: "Last Name is required",
-                minLength: "5",
-                maxLength: "20",
+
+                maxLength: {
+                  value: 20,
+                  message: "Maximum length is 20 characters",
+                },
               })}
             />
           </div>
           {errors.lastName && (
             <p className="my-2 text-red-600">{errors.lastName.message}</p>
           )}
+
           <div className="mb-6">
             <label htmlFor="email">
               <Typography
@@ -113,13 +148,17 @@ export function SignUp() {
               className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               {...register("email", {
                 required: "Email is required",
-                pattern: "_%+-]+@[a-zA-Z0-9. -]+\\. [a-zA-Z]{2,}$/,",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Invalid email address",
+                },
               })}
             />
           </div>
           {errors.email && (
             <p className="my-2 text-red-600">{errors.email.message}</p>
           )}
+
           <div className="mb-6">
             <label htmlFor="password">
               <Typography
@@ -135,7 +174,7 @@ export function SignUp() {
               className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               type={passwordShown ? "text" : "password"}
               icon={
-                <i onClick={togglePasswordVisiblity}>
+                <i onClick={togglePasswordVisibility}>
                   {passwordShown ? (
                     <EyeIcon className="h-5 w-5" />
                   ) : (
@@ -145,14 +184,39 @@ export function SignUp() {
               }
               {...register("password", {
                 required: "Password is required",
-                minLength: "8",
-                maxLength: "30",
+                minLength: {
+                  value: 6,
+                  message: "Minimum length is 8 characters",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Maximum length is 30 characters",
+                },
               })}
             />
           </div>
           {errors.password && (
             <p className="my-2 text-red-600">{errors.password.message}</p>
           )}
+          <Typography
+            variant="small"
+            color="gray"
+            className="mt-2 flex items-center gap-1 font-normal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="-mt-px h-4 w-4"
+            >
+              <path
+                fillRule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Use at least 6 characters.
+          </Typography>
           <div className="mb-6">
             <label htmlFor="confirmPassword">
               <Typography
@@ -168,7 +232,7 @@ export function SignUp() {
               className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               type={confirmPasswordShown ? "text" : "password"}
               icon={
-                <i onClick={toggleConfirmPasswordVisiblity}>
+                <i onClick={toggleConfirmPasswordVisibility}>
                   {confirmPasswordShown ? (
                     <EyeIcon className="h-5 w-5" />
                   ) : (
@@ -178,8 +242,16 @@ export function SignUp() {
               }
               {...register("confirmPassword", {
                 required: "Confirm Password is required",
-                minLength: "8",
-                maxLength: "30",
+                minLength: {
+                  value: 6,
+                  message: "Minimum length is 8 characters",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Maximum length is 30 characters",
+                },
+                validate: (value) =>
+                  value === watch("password") || "Passwords do not match",
               })}
             />
           </div>
@@ -188,9 +260,27 @@ export function SignUp() {
               {errors.confirmPassword.message}
             </p>
           )}
-
+          <Typography
+            variant="small"
+            color="gray"
+            className="mt-2 flex items-center gap-1 font-normal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="-mt-px h-4 w-4"
+            >
+              <path
+                fillRule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Use at least 6 characters.
+          </Typography>
           <div className="mb-6">
-            <label htmlFor="confirmPassword">
+            <label htmlFor="avatar">
               <Typography
                 variant="small"
                 className="mb-2 block font-medium text-gray-900"
@@ -198,7 +288,6 @@ export function SignUp() {
                 Avatar
               </Typography>
             </label>
-
             <input
               type="file"
               accept="image/*"
@@ -211,6 +300,7 @@ export function SignUp() {
               <p className="my-2 text-red-600">{errors.avatar.message}</p>
             )}
           </div>
+
           <Button
             type="submit"
             color="gray"
@@ -218,7 +308,7 @@ export function SignUp() {
             className="mt-6"
             fullWidth
           >
-            sign up
+            Sign Up
           </Button>
 
           <Button
@@ -231,9 +321,10 @@ export function SignUp() {
               src={`https://www.material-tailwind.com/logos/logo-google.png`}
               alt="google"
               className="h-6 w-6"
-            />{" "}
-            sign up with google
+            />
+            Sign up with Google
           </Button>
+
           <Typography
             variant="small"
             color="gray"
