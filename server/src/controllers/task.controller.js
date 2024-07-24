@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import { Task } from "../models/task.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import jwt from "jsonwebtoken";
+
 import { ApiResponse } from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
 

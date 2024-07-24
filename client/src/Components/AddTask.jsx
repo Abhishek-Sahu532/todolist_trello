@@ -1,7 +1,14 @@
 import { Typography, Input, Button, Textarea } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
+
+import { api } from "../api";
+import {
+  addATaskRequest,
+  addATaskSuccess,
+  addATaskFailure,
+} from "../Reducers/userSlice.js";
 
 const AddTask = () => {
   const {
@@ -10,15 +17,22 @@ const AddTask = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const dispatch = useDispatch();
+
+  const onSubmit = async (data) => {
     const myForm = new FormData();
-    myForm.set("fullname", data.fullname);
-    myForm.set("email", data.email);
-    myForm.set("username", data.username);
-    myForm.set("password", data.password);
-    myForm.set("avatar", data.avatar[0]);
-    myForm.set("coverImage", data.coverImage[0]);
+    myForm.set("title", data.title);
+    myForm.set("description", data.description);
+    myForm.set("taskimage", data.taskimage[0]);
     // dispatch(registerUser(myForm));
+    dispatch(addATaskRequest());
+    try {
+      const response = await api.post("/tasks/add-a-task", myForm);
+
+      dispatch(addATaskSuccess(response.data));
+    } catch (error) {
+      dispatch(addATaskFailure(error.response?.data?.message || error.message));
+    }
   };
 
   return (

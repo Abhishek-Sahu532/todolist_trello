@@ -3,7 +3,7 @@ import { app } from "./src/app.js";
 import { dbConnection } from "./src/db/mongo.db.js";
 
 configDotenv({
-  path: "./.env",
+  path: "../.env",
 });
 
 const port = process.env.PORT || 3000;

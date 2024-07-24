@@ -9,26 +9,8 @@ import {
 	getCurrentUser,
 	googleAuth,
 } from '../controllers/user.controller.js';
-import { body, validationResult } from 'express-validator';
 
 const router = Router();
-
-// Validation Middleware
-const validateUpdatePassword = [
-	body('oldPassword').notEmpty().withMessage('Old password is required.'),
-	body('newPassword').notEmpty().withMessage('New password is required.'),
-	body('confirmPassword')
-		.notEmpty()
-		.withMessage('Confirm password is required.'),
-	(req, res, next) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
-		next();
-	},
-];
-
 
 
 router.route('/signup').post(

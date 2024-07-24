@@ -4,6 +4,7 @@ import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import GoogleAuthBtn from "./GoogleAuthBtn";
 
 export function SignIn() {
   const [passwordShown, setPasswordShown] = useState(false);
@@ -131,19 +132,7 @@ export function SignIn() {
             sign in
           </Button>
 
-          <Button
-            variant="outlined"
-            size="lg"
-            className="mt-6 flex h-12 items-center justify-center gap-2"
-            fullWidth
-          >
-            <img
-              src={`https://www.material-tailwind.com/logos/logo-google.png`}
-              alt="google"
-              className="h-6 w-6"
-            />{" "}
-            sign in with google
-          </Button>
+         <GoogleAuthBtn />
           <Typography
             variant="small"
             color="gray"
