@@ -21,3 +21,4 @@ dbConnection()
   .catch((error) => {
     console.log(`Warning: database connection is failed`, error);
   });
+export { app };
