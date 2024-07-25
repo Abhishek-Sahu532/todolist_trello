@@ -36,16 +36,16 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tasks", taskRouter);
 
 // Catch-all route for undefined routes
-// app.all('/api/*', (req, res) => {
-// 	res
-// 		.status(404)
-// 		.json({ error: { code: '404', message: 'The page could not be found' } });
-// });
+app.all('/api/*', (req, res) => {
+	res
+		.status(404)
+		.json({ error: { code: '404', message: 'The page could not be found' } });
+});
 
-// app.use((err, req, res, next) => {
-// 	console.error(err.stack);
-// 	res.status(500).json({ error: 'Something went wrong!' });
-// });
+app.use((err, req, res, next) => {
+	console.error(err.stack);
+	res.status(500).json({ error: 'Something went wrong!' });
+});
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
