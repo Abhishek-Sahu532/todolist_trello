@@ -10,15 +10,16 @@ const port = process.env.PORT || 3000;
 
 dbConnection()
   .then(() => {
-    app.on("error", () => {
-      console.log(`Server connection is failed : ${error}`);
+    app.on("error", (error) => {
+      console.log(`Server connection failed: ${error}`);
       throw error;
     });
     app.listen(port, () => {
-      console.log(`Server is running port : ${port}`);
+      console.log(`Server is running on port: ${port}`);
     });
   })
   .catch((error) => {
-    console.log(`Warning: database connection is failed`, error);
+    console.log(`Warning: database connection failed`, error);
   });
-export { app };
+
+export default app;
